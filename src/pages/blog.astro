@@ -1,0 +1,25 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import BlogCard from '../components/BlogCard.astro';
+
+const posts = (await getCollection('blog'))
+  .filter((p) => !p.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<BaseLayout title="Blog" active="blog" description="Writing on agentic AI, LLM systems, and software engineering by Abdallah Hwishel.">
+  <section>
+    <div class="container">
+      <span class="section-label">Blog</span>
+      <h2 class="section-title">Writing</h2>
+      <p class="section-sub">
+        {posts.length} posts on building AI agents, production LLM systems, and the engineering
+        trade-offs that come with them.
+      </p>
+      <div class="blog-list">
+        {posts.map((p) => <BlogCard post={p} />)}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

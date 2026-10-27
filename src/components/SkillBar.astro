@@ -1,0 +1,47 @@
+---
+import type { SkillCategory } from '../data/skills';
+interface Props {
+  categories: SkillCategory[];
+}
+const { categories } = Astro.props;
+---
+
+<div class="skill-grid">
+  {
+    categories.map((cat) => (
+      <div class="skill-card">
+        <h3>{cat.category}</h3>
+        {
+          cat.skills.map((s) => (
+            <div class="skill-row">
+              <div class="skill-name">
+                <span>{s.name}</span>
+                <span class="pct">{s.level}/5</span>
+              </div>
+              <div class="skill-track">
+                <div class="skill-fill" style={`--fill: ${s.level * 20}%`}></div>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    ))
+  }
+</div>
+
+<script>
+  // Animate skill bars when they scroll into view (once)
+  const fill = document.querySelectorAll('.skill-fill');
+  const io = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.classList.add('animate');
+          io.unobserve(e.target);
+        }
+      });
+    },
+    { threshold: 0.3 }
+  );
+  fill.forEach((el) => io.observe(el));
+</script>

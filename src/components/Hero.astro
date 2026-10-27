@@ -1,0 +1,29 @@
+---
+import { profile, yearsExperience } from '../data/profile';
+import { url } from '../lib/url';
+---
+
+<section class="hero">
+  <div class="container">
+    <div class="hero-eyebrow">{profile.location} · {profile.visa} · Available now</div>
+    <h1>
+      Hi, I'm {profile.name.split(' ')[0]}.<br />
+      <span class="grad">I build AI agents and the systems that power them.</span>
+    </h1>
+    <p class="lede">
+      {profile.summary}
+    </p>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href={url('/resume/')}>View Interactive Resume</a>
+      <a class="btn btn-ghost" href={profile.resumePdf} download>Download PDF</a>
+      <a class="btn btn-ghost" href={url('/projects/')}>See Projects</a>
+      <a class="btn btn-ghost" href={url('/#contact')}>Get in touch</a>
+    </div>
+    <div class="hero-meta">
+      <div><strong>{yearsExperience} yrs</strong> experience</div>
+      <div><strong>AI · Backend · Full Stack</strong> across 3 companies</div>
+      <div><strong>{profile.languages.join(' / ')}</strong></div>
+      <div><strong>Open to UAE roles</strong> Dubai &amp; Abu Dhabi</div>
+    </div>
+  </div>
+</section>

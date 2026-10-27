@@ -1,0 +1,26 @@
+---
+import type { ExperienceEntry } from '../data/experience';
+interface Props {
+  entries: ExperienceEntry[];
+}
+const { entries } = Astro.props;
+---
+
+<div class="timeline">
+  {
+    entries.map((entry) => (
+      <div class="tl-entry">
+        <div class="tl-head">
+          <div>
+            <h3>{entry.role} <span class="tl-company">@ {entry.company}</span></h3>
+          </div>
+          <span class="tl-period">{entry.period}</span>
+        </div>
+        <p class="tl-summary">{entry.summary}</p>
+        <ul class="tl-bullets">
+          {entry.bullets.map((b) => <li>{b}</li>)}
+        </ul>
+      </div>
+    ))
+  }
+</div>

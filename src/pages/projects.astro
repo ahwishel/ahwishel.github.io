@@ -1,0 +1,51 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { sortedProjects } from '../lib/projects';
+
+const projects = await sortedProjects();
+const categories = ['All', ...new Set(projects.map((p) => p.data.category))];
+---
+
+<BaseLayout title="Projects" active="projects" description="Projects by Abdallah Hwishel — production AI systems, backend services, and side projects.">
+  <section style="padding-bottom: 0;">
+    <div class="container">
+      <span class="section-label">Portfolio</span>
+      <h2 class="section-title">Projects</h2>
+      <p class="section-sub">
+        A mix of production work and personal builds. Filter by type, or open any project for
+        a plain-English summary and the engineering details.
+      </p>
+      <div class="chips" id="project-chips">
+        {categories.map((c) => (
+          <button class="chip" data-filter={c} class:list={{ active: c === 'All' }} type="button">{c}</button>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top: 1.5rem;">
+    <div class="container">
+      <div class="card-grid" id="project-grid">
+        {projects.map((p) => <ProjectCard project={p} />)}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  // Client-side filter for the project grid
+  const chips = document.querySelectorAll<HTMLButtonElement>('#project-chips .chip');
+  const cards = document.querySelectorAll<HTMLElement>('#project-grid .card');
+  chips.forEach((chip) => {
+    chip.addEventListener('click', () => {
+      chips.forEach((c) => c.classList.remove('active'));
+      chip.classList.add('active');
+      const filter = chip.dataset.filter;
+      cards.forEach((card) => {
+        const match = filter === 'All' || card.dataset.category === filter;
+        card.style.display = match ? '' : 'none';
+      });
+    });
+  });
+</script>

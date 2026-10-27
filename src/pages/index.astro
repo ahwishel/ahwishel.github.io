@@ -1,0 +1,148 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import SkillBar from '../components/SkillBar.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import BlogCard from '../components/BlogCard.astro';
+import { skillCategories } from '../data/skills';
+import { profile } from '../data/profile';
+import { url } from '../lib/url';
+import { sortedProjects } from '../lib/projects';
+
+const projects = (await sortedProjects()).filter((p) => p.data.featured);
+
+// Plain-language summary for recruiters who won't read the stack lists
+const glance = [
+  {
+    icon: '🤖',
+    title: 'Ships AI to real customers',
+    body: 'Built the AI chat and voice agents now answering SellAnyCar.com customers, replacing work that used to be human-only.',
+  },
+  {
+    icon: '📈',
+    title: 'Measurable impact',
+    body: '50% faster prompt production, 40% faster operations, 30% faster databases — numbers from the systems I own.',
+  },
+  {
+    icon: '🛠️',
+    title: 'Builds whole products alone',
+    body: 'Parlay, my side project, is a full Discord-style voice and chat platform I designed, built and shipped solo.',
+  },
+  {
+    icon: '🌍',
+    title: 'US experience, UAE based',
+    body: 'University of Maryland CS graduate, 2 US engineering roles, now in Dubai. Native English and Arabic.',
+  },
+];
+
+const posts = (await getCollection('blog'))
+  .filter((p) => !p.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+---
+
+<BaseLayout title="Home" active="home" description={`${profile.name} — ${profile.title} in Dubai. AI agents, backend systems, and full-stack products.`}>
+  <Hero />
+
+  <!-- At a glance -->
+  <section id="glance" style="padding-top: 1rem;">
+    <div class="container">
+      <span class="section-label">At a glance</span>
+      <h2 class="section-title">The 30-second version</h2>
+      <p class="section-sub">If you only have a minute, here's what I bring to a team.</p>
+      <div class="glance">
+        {glance.map((g) => (
+          <div class="glance-item">
+            <span class="icon" aria-hidden="true">{g.icon}</span>
+            <h3>{g.title}</h3>
+            <p>{g.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills -->
+  <section id="skills">
+    <div class="container">
+      <span class="section-label">Skills</span>
+      <h2 class="section-title">What I work with</h2>
+      <p class="section-sub">
+        A snapshot of my day-to-day stack, from prompt engineering and agent orchestration to
+        distributed backend services and cloud infrastructure.
+      </p>
+      <SkillBar categories={skillCategories} />
+    </div>
+  </section>
+
+  <!-- Featured work -->
+  <section id="projects">
+    <div class="container">
+      <span class="section-label">Selected Work</span>
+      <h2 class="section-title">Things I've built</h2>
+      <p class="section-sub">
+        Production AI systems at SellAnyCar.com, LLM-powered features at PMG, and the
+        side projects I keep building to learn new things. Click any project for the full story.
+      </p>
+      <div class="card-grid">
+        {projects.map((p) => <ProjectCard project={p} />)}
+      </div>
+      <p style="margin-top: 1.6rem;"><a class="btn btn-ghost btn-sm" href={url('/projects/')}>All projects →</a></p>
+    </div>
+  </section>
+
+  <!-- Latest posts -->
+  <section id="blog">
+    <div class="container">
+      <span class="section-label">Blog</span>
+      <h2 class="section-title">Latest writing</h2>
+      <p class="section-sub">
+        Notes on building agentic AI systems, production voice agents, and the engineering
+        decisions behind them.
+      </p>
+      <div class="blog-list">
+        {posts.map((p) => <BlogCard post={p} />)}
+      </div>
+      <p style="margin-top: 1.6rem;"><a class="btn btn-ghost btn-sm" href={url('/blog/')}>All posts →</a></p>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact">
+    <div class="container">
+      <span class="section-label">Contact</span>
+      <h2 class="section-title">Let's talk</h2>
+      <p class="section-sub">
+        I'm actively looking for Software Engineer and AI Engineer roles in Dubai and Abu Dhabi.
+        If my work looks like a fit, I'd love to hear from you.
+      </p>
+      <div class="contact-list">
+        <div class="contact-row"><span class="k">Email</span><span class="v"><a href={`mailto:${profile.email}`}>{profile.email}</a></span></div>
+        <div class="contact-row"><span class="k">Phone</span><span class="v"><a href={`tel:${profile.phone.replace(/\s/g, '')}`}>{profile.phone}</a></span></div>
+        <div class="contact-row"><span class="k">Location</span><span class="v">{profile.location}</span></div>
+        <div class="contact-row"><span class="k">LinkedIn</span><span class="v"><a href={profile.linkedin} target="_blank" rel="noopener">{profile.linkedin.replace('https://www.', '')} ↗</a></span></div>
+        <div class="contact-row"><span class="k">GitHub</span><span class="v"><a href={profile.github} target="_blank" rel="noopener">{profile.github.replace('https://', '')} ↗</a></span></div>
+      </div>
+      <div class="hero-cta" style="margin-top: 1.6rem;">
+        <a class="btn btn-primary" href={`mailto:${profile.email}?subject=${encodeURIComponent('Opportunity for Abdallah')}`}>Email me</a>
+        <button class="btn btn-ghost" id="copy-email" type="button" data-email={profile.email}>Copy email</button>
+        <a class="btn btn-ghost" href={profile.resumePdf} download>Download resume (PDF)</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const btn = document.getElementById('copy-email') as HTMLButtonElement | null;
+  btn?.addEventListener('click', async () => {
+    const email = btn.dataset.email ?? '';
+    try {
+      await navigator.clipboard.writeText(email);
+      btn.textContent = 'Copied ✓';
+    } catch {
+      btn.textContent = email; // clipboard blocked: show it so it can be copied by hand
+    }
+    setTimeout(() => (btn.textContent = 'Copy email'), 2000);
+  });
+</script>

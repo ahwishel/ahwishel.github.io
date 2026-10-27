@@ -1,0 +1,26 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { url } from '../lib/url';
+type Post = CollectionEntry<'blog'>;
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const { title, description, pubDate, tags } = post.data;
+const fmt = new Intl.DateTimeFormat('en', { year: 'numeric', month: 'short', day: 'numeric' });
+---
+
+<a class="blog-card" href={url(`/blog/${post.id}/`)}>
+  <span class="date">{fmt.format(pubDate)}</span>
+  <h3>{title}</h3>
+  <p>{description}</p>
+  {
+    tags.length > 0 && (
+      <div class="tags" style="margin-top: 0.9rem;">
+        {tags.map((t) => <span class="tag plain">#{t}</span>)}
+      </div>
+    )
+  }
+</a>

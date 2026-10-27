@@ -1,0 +1,51 @@
+---
+import { url } from '../lib/url';
+interface Props {
+  active?: string;
+}
+const { active } = Astro.props;
+const links = [
+  { href: url('/'), label: 'Home', key: 'home' },
+  { href: url('/projects/'), label: 'Projects', key: 'projects' },
+  { href: url('/blog/'), label: 'Blog', key: 'blog' },
+  { href: url('/resume/'), label: 'Resume', key: 'resume' },
+];
+---
+
+<header class="nav">
+  <div class="nav-inner">
+    <a href={url('/')} class="nav-logo">abdallah<span>.dev</span></a>
+    <nav class="nav-links">
+      {
+        links.map((l) => (
+          <a href={l.href} class:list={{ active: active === l.key }}>{l.label}</a>
+        ))
+      }
+      <div class="nav-right">
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme" type="button">
+          <span class="icon-moon">🌙</span><span class="icon-sun" hidden>☀️</span>
+        </button>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle = document.getElementById('theme-toggle') as HTMLButtonElement | null;
+  const moon = toggle?.querySelector<HTMLElement>('.icon-moon') ?? null;
+  const sun = toggle?.querySelector<HTMLElement>('.icon-sun') ?? null;
+  const sync = () => {
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    if (moon) moon.hidden = isLight;
+    if (sun) sun.hidden = !isLight;
+  };
+  toggle?.addEventListener('click', () => {
+    const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', next);
+    try {
+      localStorage.setItem('theme', next);
+    } catch {}
+    sync();
+  });
+  sync();
+</script>

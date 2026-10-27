@@ -1,0 +1,80 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { url } from '../../lib/url';
+import { profile } from '../../data/profile';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+const { title, description, year, category, stack, role, plain, metrics, highlights, repo, demo } = project.data;
+---
+
+<BaseLayout title={title} description={description} active="projects">
+  <section class="project-hero">
+    <div class="container">
+      <a href={url('/projects/')} style="font-size: 0.9rem;">← All projects</a>
+      <span class="section-label" style="margin-top: 1.2rem;">{category} · {year}</span>
+      <h1 class="project-title">{title}</h1>
+      <p class="lede-sm">{description}</p>
+
+      {
+        metrics.length > 0 && (
+          <div class="metric-grid">
+            {metrics.map((m) => (
+              <div class="metric">
+                <strong>{m.value}</strong>
+                <span>{m.label}</span>
+              </div>
+            ))}
+          </div>
+        )
+      }
+
+      <div class="project-facts">
+        {
+          plain && (
+            <div class="plain-box">
+              <span class="plain-label">In plain English</span>
+              <p>{plain}</p>
+            </div>
+          )
+        }
+        <dl class="fact-list">
+          {role && (<><dt>My role</dt><dd>{role}</dd></>)}
+          {highlights.length > 0 && (
+            <>
+              <dt>Key results</dt>
+              <dd>
+                <ul class="tl-bullets">{highlights.map((h) => <li>{h}</li>)}</ul>
+              </dd>
+            </>
+          )}
+          <dt>Tech used</dt>
+          <dd class="tags">{stack.map((t) => <span class="tag">{t}</span>)}</dd>
+        </dl>
+      </div>
+
+      <div class="hero-cta" style="margin-top: 1.8rem;">
+        {repo && <a class="btn btn-primary" href={repo} target="_blank" rel="noopener">View source on GitHub ↗</a>}
+        {demo && <a class="btn btn-ghost" href={demo} target="_blank" rel="noopener">Live demo ↗</a>}
+        <a class="btn btn-ghost" href={`mailto:${profile.email}?subject=${encodeURIComponent(`About ${title.split(' — ')[0]}`)}`}>Ask me about it</a>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top: 1rem;">
+    <div class="container">
+      <div class="prose project-body">
+        <Content />
+      </div>
+    </div>
+  </section>
+</BaseLayout>

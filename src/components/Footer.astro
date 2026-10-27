@@ -1,0 +1,17 @@
+---
+import { profile } from '../data/profile';
+import { url } from '../lib/url';
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div>© {year} {profile.name} — Built with Astro. Open to Software &amp; AI Engineering roles in the UAE.</div>
+    <div class="footer-links">
+      <a href={profile.linkedin} target="_blank" rel="noopener">LinkedIn</a>
+      <a href={profile.github} target="_blank" rel="noopener">GitHub</a>
+      <a href={`mailto:${profile.email}`}>Email</a>
+      <a href={url('/resume/')}>Resume</a>
+    </div>
+  </div>
+</footer>

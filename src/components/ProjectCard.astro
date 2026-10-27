@@ -1,0 +1,46 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { url } from '../lib/url';
+type Project = CollectionEntry<'projects'>;
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const { title, description, year, stack, category, repo, demo, highlights, metrics } = project.data;
+const detail = url(`/projects/${project.id}/`);
+---
+
+<article class="card" data-category={category} class:list={{ 'card-flagship': category === 'Side Project' }}>
+  <div class="meta-row">
+    <span>{year}</span>
+    <span>{category}</span>
+  </div>
+  <h3><a class="card-link" href={detail}>{title}</a></h3>
+  <p>{description}</p>
+  {
+    metrics.length > 0 && (
+      <div class="mini-metrics">
+        {metrics.slice(0, 3).map((m) => (
+          <div><strong>{m.value}</strong><span>{m.label}</span></div>
+        ))}
+      </div>
+    )
+  }
+  {
+    highlights.length > 0 && (
+      <ul class="tl-bullets" style="margin-top: 0.8rem;">
+        {highlights.slice(0, 3).map((h) => <li>{h}</li>)}
+      </ul>
+    )
+  }
+  <div class="tags">
+    {stack.slice(0, 6).map((t) => <span class="tag">{t}</span>)}
+  </div>
+  <div class="card-cta">
+    <a href={detail}>Read the story →</a>
+    {repo && <a href={repo} target="_blank" rel="noopener">Source ↗</a>}
+    {demo && <a href={demo} target="_blank" rel="noopener">Demo ↗</a>}
+  </div>
+</article>
