@@ -1,6 +1,5 @@
 // ---------------------------------------------------------------------------
 // Central profile data. Edit this file to update the whole site.
-// TODO: confirm the LinkedIn URL is your real profile.
 // ---------------------------------------------------------------------------
 
 import { url } from '../lib/url';
@@ -16,7 +15,7 @@ export const profile = {
   nationality: 'Egyptian',
   languages: ['Native English', 'Native Arabic'],
   summary: `Results-driven Software Engineer with expertise in backend and full-stack development. Skilled in leveraging advanced technologies like large language models and cloud services to design AI-driven applications, enhance performance, and deliver scalable, secure solutions. Proven success in developing innovative tools across diverse industries.`,
-  linkedin: 'https://www.linkedin.com/in/abdallah-hwishel', // TODO: confirm
+  linkedin: 'https://www.linkedin.com/in/abe-hwishel',
   github: 'https://github.com/ahwishel',
   resumePdf: url('/resume.pdf'),
 };
